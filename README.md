@@ -1,1 +1,1 @@
-TiendaIA - Equipo 3
+## TiendaIA - Equipo 3
