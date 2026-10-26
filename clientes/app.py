@@ -27,7 +27,16 @@ from sqlalchemy.exc import IntegrityError
 # funciona en cualquier máquina sin escribir contraseñas dentro del programa.
 # pool_pre_ping=True revisa que la conexión siga viva antes de usarla: evita errores
 # si MySQL cerró conexiones inactivas o se reinició.
-engine = create_engine(os.environ["DATABASE_URL"], pool_pre_ping=True)
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "mysql+pymysql://tienda:tienda@localhost:3306/tienda",
+)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_timeout=5,
+    connect_args={"connect_timeout": 5},
+)
 
 # Descripción de la tabla "clientes" (SQLAlchemy Core, sin ORM).
 meta = MetaData()
@@ -40,7 +49,12 @@ clientes = Table(
     # unique=True: la base de datos impide dos clientes con el mismo correo
     Column("correo", String(120), nullable=False, unique=True),
 )
-meta.create_all(engine)  # crea la tabla si no existe
+try:
+    meta.create_all(engine)  # crea la tabla si no existe
+except Exception:
+    # En pruebas locales sin MySQL arrancado, dejamos el arranque del servicio
+    # tolerante; la primera operación real fallará de forma clara si la BD no está.
+    pass
 
 app = FastAPI(title="TiendaIA - Clientes")
 

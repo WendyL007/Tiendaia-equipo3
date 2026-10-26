@@ -15,7 +15,15 @@ from pydantic import BaseModel, Field
 # ---------------------------------------------------------------- Configuración
 # Conexión a Redis. "redis" es el nombre del contenedor en docker-compose.yml.
 # decode_responses=True hace que Redis devuelva str en lugar de bytes.
-r = redis.Redis(host=os.getenv("REDIS_HOST", "redis"), decode_responses=True)
+# socket_* timeout evita que una caída del servicio deje la app colgada a la espera
+# de Redis durante mucho tiempo.
+r = redis.Redis(
+    host=os.getenv("REDIS_HOST", "redis"),
+    decode_responses=True,
+    socket_connect_timeout=2,
+    socket_timeout=2,
+    health_check_interval=30,
+)
 
 # Las URL se leen de variables de entorno: en Docker Compose cada servicio se
 # llama por su nombre (http://clientes:8000); fuera de Docker se pueden cambiar.
@@ -55,7 +63,11 @@ def consultar(url: str):
 @app.get("/health")
 def salud():
     """Verificación de salud (200). Incluye si Redis responde a PING."""
-    return {"servicio": "ventas", "status": "ok", "redis": r.ping()}
+    try:
+        redis_ok = bool(r.ping())
+    except redis.exceptions.RedisError:
+        redis_ok = False
+    return {"servicio": "ventas", "status": "ok" if redis_ok else "degraded", "redis": redis_ok}
 
 
 @app.post("/ventas", status_code=201)

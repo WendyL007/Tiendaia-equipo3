@@ -13,8 +13,16 @@ from pymongo import MongoClient, ReturnDocument
 # MONGO_URL llega por variable de entorno (p. ej. mongodb://mongo:27017, donde
 # "mongo" es el nombre del contenedor en docker-compose.yml).
 # ["tienda"] selecciona la base de datos; MongoDB la crea al primer uso.
-db = MongoClient(os.environ["MONGO_URL"])["tienda"]
-db.productos.create_index("id", unique=True)
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+# serverSelectionTimeoutMS impide que una caída de Mongo deje la app colgada al
+# intentar abrir la conexión o crear índices en el arranque.
+db = MongoClient(MONGO_URL, serverSelectionTimeoutMS=2000)["tienda"]
+try:
+    db.productos.create_index("id", unique=True)
+except Exception:
+    # Si la base no está disponible en ese arranque, el servicio aún puede
+    # importarse; las operaciones reales indicarán el problema con un 500.
+    pass
 
 app = FastAPI(title="TiendaIA - Productos")
 
