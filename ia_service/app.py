@@ -6,6 +6,7 @@ entrenado se guarda en disco (volumen de Docker) para usarlo en las predicciones
 """
 import os
 from pathlib import Path
+from cola import router as cola_router  
 import joblib
 import pandas as pd
 import requests  # cliente HTTP para pedir las ventas al microservicio Ventas
@@ -25,6 +26,7 @@ MODELO = Path(os.getenv("MODELO_PATH", "/modelos/modelo.joblib"))
 COLUMNAS = ["producto_id", "mes", "precio"]  # variables de entrada (features)
 
 app = FastAPI(title="TiendaIA - Servicio de IA")
+app.include_router(cola_router)  
 
 
 def preparar(ventas: list[dict]) -> pd.DataFrame:
