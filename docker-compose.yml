@@ -128,7 +128,7 @@ services:
      MODELO_PATH: /modelos/modelo.joblib # modelo entrenado por el servicio de IA
      REDIS_HOST: redis # donde se escribe el resultado
      RABBITMQ_HOST: rabbitmq # de donde se leen las solicitudes
-     RETARDO_MS: "3000" # pausa artificial: simula un modelo pesado
+     RETARDO_MS: "200" # pausa artificial: simula un modelo pesado
    # Volumen compartido con "ia": el worker lee el modelo que "ia" guardó al entrenar
    volumes: [modelos:/modelos]
    depends_on: {rabbitmq: {condition: service_healthy}}
