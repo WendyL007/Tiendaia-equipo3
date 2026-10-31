@@ -59,7 +59,7 @@ services:
     build: {<<: *construir, args: {SERVICIO: ventas}}
     environment:
       REDIS_HOST: redis
-      RABBITMQ_HOST: rabbitmq # Lab. 3
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq} # Lab. 3
     # Ventas llama a Clientes y Productos: se inician antes (solo orden de arranque)
     depends_on: [redis, clientes, productos]
   ia:
@@ -69,7 +69,7 @@ services:
       VENTAS_URL: http://ventas:8000 # de aquí obtiene los datos para entrenar
       MODELO_PATH: /modelos/modelo.joblib
       REDIS_HOST: redis # Lab. 3
-      RABBITMQ_HOST: rabbitmq # Lab. 3
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq} # Lab. 3
     # El modelo entrenado se guarda en un volumen para no perderlo al recrear
     volumes: [modelos:/modelos]
     depends_on: [ventas]
@@ -113,7 +113,7 @@ services:
    <<: *servicio
    build: {<<: *construir, args: {SERVICIO: notificaciones}}
    # Los hosts se llaman por el nombre del servicio dentro de la red de Compose
-   environment: {REDIS_HOST: redis, RABBITMQ_HOST: rabbitmq}
+   environment: {REDIS_HOST: redis, RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}"}
    depends_on: {rabbitmq: {condition: service_healthy}}
    # ------------------------------------------------------------ Worker de inferencia
    # Proceso que consume la cola de trabajo "inferencias". Usa el MISMO código e
@@ -121,21 +121,27 @@ services:
    # Se pueden lanzar varias copias: docker compose up -d --scale worker=3
 
   worker:
-   <<: *servicio
-   build: {<<: *construir, args: {SERVICIO: ia_service}}
-   command: ["python", "worker.py"] # reemplaza el CMD (uvicorn) del Dockerfile
-   environment:
-     MODELO_PATH: /modelos/modelo.joblib # modelo entrenado por el servicio de IA
-     REDIS_HOST: redis # donde se escribe el resultado
-     RABBITMQ_HOST: rabbitmq # de donde se leen las solicitudes
-     RETARDO_MS: "200" # pausa artificial: simula un modelo pesado
-   # Volumen compartido con "ia": el worker lee el modelo que "ia" guardó al entrenar
-   volumes: [modelos:/modelos]
-   depends_on: {rabbitmq: {condition: service_healthy}}
+    <<: *servicio
+    build: {<<: *construir, args: {SERVICIO: ia_service}}
+    command: ["python", "worker.py"]
+    environment:
+      MODELO_PATH: /modelos/modelo.joblib
+      REDIS_HOST: redis
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RETARDO_MS: "200"
+    volumes: [modelos:/modelos]
+    depends_on: {rabbitmq: {condition: service_healthy}}
+
+  ia_listener:
+    <<: *servicio
+    build: {<<: *construir, args: {SERVICIO: ia_listener}}
+    command: ["python", "listener.py"]
+    environment: {REDIS_HOST: redis, RABBITMQ_HOST: "${RABBITMQ_HOST:-rabbitmq}", IA_URL: "http://ia:8000"}
+    depends_on: {rabbitmq: {condition: service_healthy}}
+
 # Volúmenes con nombre: Docker los administra y conservan los datos
 volumes:
   mysql_data:
   mongo_data:
   redis_data:
   modelos:
- 
