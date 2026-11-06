@@ -10,42 +10,30 @@ from pydantic import BaseModel, Field
 from pymongo import MongoClient, ReturnDocument
 
 # ---------------------------------------------------------------- Base de datos
-# MONGO_URL llega por variable de entorno (p. ej. mongodb://mongo:27017, donde
-# "mongo" es el nombre del contenedor en docker-compose.yml).
-# ["tienda"] selecciona la base de datos; MongoDB la crea al primer uso.
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-# serverSelectionTimeoutMS impide que una caída de Mongo deje la app colgada al
-# intentar abrir la conexión o crear índices en el arranque.
 db = MongoClient(MONGO_URL, serverSelectionTimeoutMS=2000)["tienda"]
 try:
     db.productos.create_index("id", unique=True)
 except Exception:
-    # Si la base no está disponible en ese arranque, el servicio aún puede
-    # importarse; las operaciones reales indicarán el problema con un 500.
     pass
 
 app = FastAPI(title="TiendaIA - Productos")
 
 
-# ---------------------------------------------------------------- Modelo de entrada
+# ---------------------------------------------------------------- Modelos de entrada
 class ProductoIn(BaseModel):
-    """Datos de un producto enviados en el cuerpo JSON.
-    Si no cumplen las reglas, FastAPI responde 422 automáticamente.
-    """
-
+    """Datos de un producto enviados en el cuerpo JSON."""
     nombre: str = Field(min_length=1, max_length=100)
-    # Field(gt=0): "greater than 0", el precio debe ser estrictamente positivo
     precio: float = Field(gt=0)
-    categoria: str = "general"  # valor por omisión si no se envía
+    categoria: str = "general"
+
+
+class ImagenIn(BaseModel):
+    """Modelo para actualizar o borrar la clave de la imagen (acepta str o null)."""
+    imagen_key: str | None
 
 
 def siguiente_id() -> int:
-    """Id entero autoincremental (MongoDB no lo tiene: usamos un contador)."""
-    # Documento contador {"_id": "productos", "valor": N} en la colección
-    # "contadores". $inc suma 1 de forma ATÓMICA en el servidor: aunque lleguen
-    # dos peticiones al mismo tiempo, nunca reciben el mismo id.
-    # upsert=True crea el contador la primera vez; ReturnDocument.AFTER devuelve
-    # el documento ya incrementado.
     doc = db.contadores.find_one_and_update(
         {"_id": "productos"},
         {"$inc": {"valor": 1}},
@@ -61,13 +49,6 @@ def salud():
     """Verificación de salud usada por el gateway; responde 200."""
     return {"servicio": "productos", "status": "ok"}
 
-
-#@app.get("/productos")
-#def listar():
-    """Devuelve todos los productos (200)."""
-    # {"_id": 0} es una proyección: excluye el campo _id interno de MongoDB
-    # (un ObjectId que no se puede convertir a JSON directamente).
-    return list(db.productos.find({}, {"_id": 0}))
 
 @app.get("/productos")
 def listar(categoria: str | None = None, precio_max: float | None = None):
@@ -85,28 +66,37 @@ def obtener(producto_id: int):
     """Devuelve un producto por su id (200) o 404 si no existe."""
     p = db.productos.find_one({"id": producto_id}, {"_id": 0})
     if p is None:
-        # Ventas interpreta este 404 como "el producto no existe"
         raise HTTPException(404, "Producto no encontrado")
     return p
 
 
 @app.post("/productos", status_code=201)
 def crear(p: ProductoIn):
-    """Crea un producto con id nuevo. Responde 201 (Created) o 422 si es inválido."""
+    """Crea un producto con id nuevo. Responde 201 (Created)."""
     doc = {"id": siguiente_id(), **p.model_dump()}
-    db.productos.insert_one(dict(doc))  # copia: insert_one agrega _id
+    db.productos.insert_one(dict(doc))
     return doc
 
 
 @app.put("/productos/{producto_id}")
 def actualizar(producto_id: int, p: ProductoIn):
     """Actualiza los campos de un producto (200) o responde 404 si no existe."""
-    # $set reemplaza solo los campos indicados y conserva el resto del documento
     r = db.productos.update_one({"id": producto_id}, {"$set": p.model_dump()})
-    # matched_count = documentos que coincidieron con el filtro
     if r.matched_count == 0:
         raise HTTPException(404, "Producto no encontrado")
     return {"id": producto_id, **p.model_dump()}
+
+
+@app.put("/productos/{producto_id}/imagen")
+def actualizar_imagen(producto_id: int, body: ImagenIn):
+    """Guarda o borra la imagen_key del producto sin modificar sus otros datos[cite: 10]."""
+    r = db.productos.update_one(
+        {"id": producto_id}, 
+        {"$set": {"imagen_key": body.imagen_key}}
+    )
+    if r.matched_count == 0:
+        raise HTTPException(404, "Producto no encontrado")
+    return {"id": producto_id, "imagen_key": body.imagen_key}
 
 
 @app.delete("/productos/{producto_id}", status_code=204)
