@@ -89,7 +89,7 @@ def actualizar(producto_id: int, p: ProductoIn):
 
 @app.put("/productos/{producto_id}/imagen")
 def actualizar_imagen(producto_id: int, body: ImagenIn):
-    """Guarda o borra la imagen_key del producto sin modificar sus otros datos[cite: 10]."""
+    """Guarda o borra la imagen_key del producto sin modificar sus otros datos."""
     r = db.productos.update_one(
         {"id": producto_id}, 
         {"$set": {"imagen_key": body.imagen_key}}
