@@ -26,12 +26,12 @@ app = FastAPI(title="TiendaIA - Imágenes")
 async def subir(producto_id: int = Form(gt=0), archivo: UploadFile = File(...)):
     """Recibe una imagen, la almacena en S3 y la asocia al producto."""
 
-    # 1. Consultar el producto. Si no existe, responder 404.
-    p = producto(producto_id)
-
-    # 2. Validar el tipo de archivo.
+    # 1. Validar el tipo de archivo.
     if archivo.content_type not in TIPOS:
         raise HTTPException(415, "Solo se aceptan JPEG, PNG o WebP")
+
+    # 2. Consultar el producto. Si no existe, responder 404.
+    p = producto(producto_id)
 
     # 3. Leer los bytes del archivo.
     datos = await archivo.read()
