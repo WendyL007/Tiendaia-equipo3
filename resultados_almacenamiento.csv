@@ -1,0 +1,9 @@
+fecha,destino,prueba,media,desv,unidad,n,errores
+2026-11-08T18:33:42,seaweedfs-laptop,subida 1 MB,14.54,6.43,MB/s,5,0
+2026-11-08T18:33:42,seaweedfs-laptop,bajada 1 MB,168.1,53.92,MB/s,5,0
+2026-11-08T18:33:43,seaweedfs-laptop,subida 10 MB,89.67,18.98,MB/s,5,0
+2026-11-08T18:33:43,seaweedfs-laptop,bajada 10 MB,334.19,100.99,MB/s,5,0
+2026-11-08T18:33:45,seaweedfs-laptop,subida 25 MB,84.38,12.29,MB/s,5,0
+2026-11-08T18:33:45,seaweedfs-laptop,bajada 25 MB,460.07,136.58,MB/s,5,0
+2026-11-08T18:33:46,seaweedfs-laptop,200 archivos de 10 KB,3.11,0.7,ms/archivo,200,0
+2026-11-08T18:33:46,seaweedfs-laptop,rendimiento pequenos,321.65,0,archivos/s,1,0
