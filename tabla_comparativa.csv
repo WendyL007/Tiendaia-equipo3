@@ -1,9 +1,9 @@
-prueba,seaweedfs-laptop
-200 archivos de 10 KB,3.11 +/- 0.7
-bajada 1 MB,168.1 +/- 53.92
-bajada 10 MB,334.19 +/- 100.99
-bajada 25 MB,460.07 +/- 136.58
-rendimiento pequenos,321.65 +/- 0.0
-subida 1 MB,14.54 +/- 6.43
-subida 10 MB,89.67 +/- 18.98
-subida 25 MB,84.38 +/- 12.29
+prueba,unidad,seaweedfs-laptop,supabase-codespace,b2-codespace
+subida 1 MB,MB/s,14.54 +/- 6.43,0.76 +/- 0.09,2.81 +/- 2.11
+bajada 1 MB,MB/s,168.10 +/- 53.92,1.92 +/- 1.08,8.69 +/- 3.28
+subida 10 MB,MB/s,89.67 +/- 18.98,0.89 +/- 0.12,8.34 +/- 2.72
+bajada 10 MB,MB/s,334.19 +/- 100.99,8.64 +/- 6.18,37.40 +/- 3.29
+subida 25 MB,MB/s,84.38 +/- 12.29,1.41 +/- 0.75,20.03 +/- 4.04
+bajada 25 MB,MB/s,460.07 +/- 136.58,19.26 +/- 14.64,48.33 +/- 6.95
+200 archivos de 10 KB,ms/archivo,3.11 +/- 0.70,220.78 +/- 145.00,468.39 +/- 301.95
+rendimiento pequenos,archivos/s,321.65 +/- 0.00,4.53 +/- 0.08,2.13 +/- 0.00

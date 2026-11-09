@@ -18,11 +18,16 @@ TIPOS = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
 MAX_BYTES = 5 * 1024 * 1024 # 5 MB: límite para no llenar el almacenamiento
 
 # Selector de adaptador de almacenamiento
-if os.getenv("ALMACEN", "s3") == "azure":
+tipo_almacen = os.getenv("ALMACEN", "s3").strip().lower()
+if tipo_almacen == "azure":
     from almacen_azure import AlmacenAzure
     almacen = AlmacenAzure()
-else:
+elif tipo_almacen == "s3":
     almacen = AlmacenS3()
+else:
+    raise RuntimeError(
+        f"ALMACEN no válido: {tipo_almacen!r}. Valores permitidos: 's3' o 'azure'."
+    )
 
 TIEMPO_ESPERA = 5 # segundos máximos de espera a Productos
 sesion = requests.Session() # reutiliza conexiones TCP con Productos

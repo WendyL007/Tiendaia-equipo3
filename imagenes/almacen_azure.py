@@ -6,7 +6,23 @@ from azure.core.exceptions import ResourceNotFoundError
 class AlmacenAzure:
     def __init__(self):
         self.contenedor = "tiendaia-imagenes" # En Azure los buckets se llaman containers
-        self.cliente = BlobServiceClient.from_connection_string(os.environ["AZURE_CONNECTION_STRING"])
+        connection_string = os.environ["AZURE_CONNECTION_STRING"]
+        configuracion = dict(
+            parte.split("=", 1)
+            for parte in connection_string.split(";")
+            if "=" in parte
+        )
+        self.account_name = configuracion.get("AccountName")
+        self.account_key = configuracion.get("AccountKey")
+        if not self.account_name or not self.account_key:
+            raise ValueError(
+                "AZURE_CONNECTION_STRING debe incluir AccountName y AccountKey "
+                "para generar URLs SAS."
+            )
+        self.endpoint_publico = os.getenv(
+            "AZURE_PUBLIC_ENDPOINT", "http://localhost:10000/devstoreaccount1"
+        ).rstrip("/")
+        self.cliente = BlobServiceClient.from_connection_string(connection_string)
         
         # Crear contenedor si no existe
         try:
@@ -25,15 +41,14 @@ class AlmacenAzure:
 
     def url(self, clave: str, segundos: int = 3600) -> str:
         sas_token = generate_blob_sas(
-            account_name="devstoreaccount1",
-            account_key="Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
+            account_name=self.account_name,
+            account_key=self.account_key,
             container_name=self.contenedor,
             blob_name=clave,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.now(timezone.utc) + timedelta(seconds=segundos)
         )
-        endpoint_publico = os.getenv("AZURE_PUBLIC_ENDPOINT")
-        return f"{endpoint_publico}/{self.contenedor}/{clave}?{sas_token}"
+        return f"{self.endpoint_publico}/{self.contenedor}/{clave}?{sas_token}"
 
     def eliminar(self, clave: str) -> None:
         blob_client = self.cliente.get_blob_client(container=self.contenedor, blob=clave)

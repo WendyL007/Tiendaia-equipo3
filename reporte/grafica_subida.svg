@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="520" viewBox="0 0 940 520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="470.0" y="35" text-anchor="middle" font-family="sans-serif" font-size="22">Velocidad de subida</text>
+<line x1="90" y1="415.0" x2="740" y2="415.0" stroke="#ddd"/>
+<text x="78" y="420.0" text-anchor="end" font-family="sans-serif" font-size="12">0.00</text>
+<line x1="90" y1="347.0" x2="740" y2="347.0" stroke="#ddd"/>
+<text x="78" y="352.0" text-anchor="end" font-family="sans-serif" font-size="12">24.99</text>
+<line x1="90" y1="279.0" x2="740" y2="279.0" stroke="#ddd"/>
+<text x="78" y="284.0" text-anchor="end" font-family="sans-serif" font-size="12">49.98</text>
+<line x1="90" y1="211.0" x2="740" y2="211.0" stroke="#ddd"/>
+<text x="78" y="216.0" text-anchor="end" font-family="sans-serif" font-size="12">74.97</text>
+<line x1="90" y1="143.0" x2="740" y2="143.0" stroke="#ddd"/>
+<text x="78" y="148.0" text-anchor="end" font-family="sans-serif" font-size="12">99.96</text>
+<line x1="90" y1="75.0" x2="740" y2="75.0" stroke="#ddd"/>
+<text x="78" y="80.0" text-anchor="end" font-family="sans-serif" font-size="12">124.95</text>
+<text x="198.3" y="440" text-anchor="middle" font-family="sans-serif" font-size="12">1</text>
+<text x="415.0" y="440" text-anchor="middle" font-family="sans-serif" font-size="12">10</text>
+<text x="631.7" y="440" text-anchor="middle" font-family="sans-serif" font-size="12">25</text>
+<line x1="198.3" y1="357.9" x2="198.3" y2="392.9" stroke="#1769aa"/>
+<circle cx="198.3" cy="375.4" r="5" fill="#1769aa"/>
+<line x1="415.0" y1="119.3" x2="415.0" y2="222.6" stroke="#1769aa"/>
+<circle cx="415.0" cy="171.0" r="5" fill="#1769aa"/>
+<line x1="631.7" y1="151.9" x2="631.7" y2="218.8" stroke="#1769aa"/>
+<circle cx="631.7" cy="185.4" r="5" fill="#1769aa"/>
+<polyline points="198.3,375.4 415.0,171.0 631.7,185.4" fill="none" stroke="#1769aa" stroke-width="2"/>
+<line x1="770" y1="75" x2="795" y2="75" stroke="#1769aa" stroke-width="3"/>
+<text x="802" y="80" font-family="sans-serif" font-size="13">seaweedfs-laptop</text>
+<line x1="198.3" y1="412.7" x2="198.3" y2="413.2" stroke="#d1495b"/>
+<circle cx="198.3" cy="412.9" r="5" fill="#d1495b"/>
+<line x1="415.0" y1="412.3" x2="415.0" y2="412.9" stroke="#d1495b"/>
+<circle cx="415.0" cy="412.6" r="5" fill="#d1495b"/>
+<line x1="631.7" y1="409.1" x2="631.7" y2="413.2" stroke="#d1495b"/>
+<circle cx="631.7" cy="411.2" r="5" fill="#d1495b"/>
+<polyline points="198.3,412.9 415.0,412.6 631.7,411.2" fill="none" stroke="#d1495b" stroke-width="2"/>
+<line x1="770" y1="95" x2="795" y2="95" stroke="#d1495b" stroke-width="3"/>
+<text x="802" y="100" font-family="sans-serif" font-size="13">supabase-codespace</text>
+<line x1="198.3" y1="401.6" x2="198.3" y2="413.1" stroke="#2a9d8f"/>
+<circle cx="198.3" cy="407.4" r="5" fill="#2a9d8f"/>
+<line x1="415.0" y1="384.9" x2="415.0" y2="399.7" stroke="#2a9d8f"/>
+<circle cx="415.0" cy="392.3" r="5" fill="#2a9d8f"/>
+<line x1="631.7" y1="349.5" x2="631.7" y2="371.5" stroke="#2a9d8f"/>
+<circle cx="631.7" cy="360.5" r="5" fill="#2a9d8f"/>
+<polyline points="198.3,407.4 415.0,392.3 631.7,360.5" fill="none" stroke="#2a9d8f" stroke-width="2"/>
+<line x1="770" y1="115" x2="795" y2="115" stroke="#2a9d8f" stroke-width="3"/>
+<text x="802" y="120" font-family="sans-serif" font-size="13">b2-codespace</text>
+<line x1="90" y1="415" x2="740" y2="415" stroke="#333"/>
+<line x1="90" y1="75" x2="90" y2="415" stroke="#333"/>
+<text x="25" y="245.0" transform="rotate(-90 25 245.0)" text-anchor="middle" font-family="sans-serif" font-size="14">Valor medio (con barra de desviación)</text>
+<text x="415.0" y="496" text-anchor="middle" font-family="sans-serif" font-size="14">Tamaño del archivo (MB)</text>
+</svg>
