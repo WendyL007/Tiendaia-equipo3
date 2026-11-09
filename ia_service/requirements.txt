@@ -5,3 +5,5 @@ requests>=2.31 # cliente HTTP para pedir las ventas al servicio Ventas
 pandas>=2.2 # tablas (DataFrame) para preparar los datos
 scikit-learn>=1.5 # modelo RandomForest, one-hot, métricas MAE y R2
 joblib>=1.4 # guarda y carga el modelo entrenado en un archivo
+redis>=5.0 # estado y resultado de cada solicitud asíncrona
+pika>=1.3 # cliente de RabbitMQ (AMQP): cola de trabajo "inferencias"
