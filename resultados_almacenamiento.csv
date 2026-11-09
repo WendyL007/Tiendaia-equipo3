@@ -7,3 +7,27 @@ fecha,destino,prueba,media,desv,unidad,n,errores
 2026-11-08T18:33:45,seaweedfs-laptop,bajada 25 MB,460.07,136.58,MB/s,5,0
 2026-11-08T18:33:46,seaweedfs-laptop,200 archivos de 10 KB,3.11,0.7,ms/archivo,200,0
 2026-11-08T18:33:46,seaweedfs-laptop,rendimiento pequenos,321.65,0,archivos/s,1,0
+2026-11-09T02:42:35,supabase-codespace,subida 1 MB,0.82,0.07,MB/s,5,0
+2026-11-09T02:42:35,supabase-codespace,bajada 1 MB,2.56,0.75,MB/s,5,0
+2026-11-09T02:43:39,supabase-codespace,subida 10 MB,0.92,0.01,MB/s,5,0
+2026-11-09T02:43:39,supabase-codespace,bajada 10 MB,8.63,6.0,MB/s,5,0
+2026-11-09T02:45:58,supabase-codespace,subida 25 MB,0.96,0.06,MB/s,5,0
+2026-11-09T02:45:58,supabase-codespace,bajada 25 MB,28.54,14.63,MB/s,5,0
+2026-11-09T02:46:43,supabase-codespace,200 archivos de 10 KB,223.72,151.13,ms/archivo,200,0
+2026-11-09T02:46:43,supabase-codespace,rendimiento pequenos,4.47,0,archivos/s,1,0
+2026-11-09T02:53:09,supabase-codespace,subida 1 MB,0.71,0.07,MB/s,5,0
+2026-11-09T02:53:09,supabase-codespace,bajada 1 MB,1.28,1.02,MB/s,5,0
+2026-11-09T02:54:30,supabase-codespace,subida 10 MB,0.86,0.17,MB/s,5,0
+2026-11-09T02:54:30,supabase-codespace,bajada 10 MB,8.65,7.06,MB/s,5,0
+2026-11-09T02:56:17,supabase-codespace,subida 25 MB,1.86,0.87,MB/s,5,0
+2026-11-09T02:56:17,supabase-codespace,bajada 25 MB,9.99,7.3,MB/s,5,0
+2026-11-09T02:57:00,supabase-codespace,200 archivos de 10 KB,217.85,138.92,ms/archivo,200,0
+2026-11-09T02:57:00,supabase-codespace,rendimiento pequenos,4.59,0,archivos/s,1,0
+2026-11-09T03:27:50,b2-codespace,subida 1 MB,2.81,2.11,MB/s,5,0
+2026-11-09T03:27:50,b2-codespace,bajada 1 MB,8.69,3.28,MB/s,5,0
+2026-11-09T03:27:58,b2-codespace,subida 10 MB,8.34,2.72,MB/s,5,0
+2026-11-09T03:27:58,b2-codespace,bajada 10 MB,37.4,3.29,MB/s,5,0
+2026-11-09T03:28:08,b2-codespace,subida 25 MB,20.03,4.04,MB/s,5,0
+2026-11-09T03:28:08,b2-codespace,bajada 25 MB,48.33,6.95,MB/s,5,0
+2026-11-09T03:29:42,b2-codespace,200 archivos de 10 KB,468.39,301.95,ms/archivo,200,0
+2026-11-09T03:29:42,b2-codespace,rendimiento pequenos,2.13,0,archivos/s,1,0
