@@ -16,7 +16,14 @@ PRODUCTOS_URL = os.getenv("PRODUCTOS_URL", "http://productos:8000")
 # Tipos MIME aceptados -> extensión del archivo que se guarda en el bucket
 TIPOS = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
 MAX_BYTES = 5 * 1024 * 1024 # 5 MB: límite para no llenar el almacenamiento
-almacen = AlmacenS3() # al arrancar se conecta a S3 y revisa el bucket
+
+# Selector de adaptador de almacenamiento
+if os.getenv("ALMACEN", "s3") == "azure":
+    from almacen_azure import AlmacenAzure
+    almacen = AlmacenAzure()
+else:
+    almacen = AlmacenS3()
+
 TIEMPO_ESPERA = 5 # segundos máximos de espera a Productos
 sesion = requests.Session() # reutiliza conexiones TCP con Productos
 app = FastAPI(title="TiendaIA - Imágenes")
@@ -24,7 +31,7 @@ app = FastAPI(title="TiendaIA - Imágenes")
 # ---------------------------------------------------------------- Subir imagen
 @app.post("/imagenes", status_code=201)
 async def subir(producto_id: int = Form(gt=0), archivo: UploadFile = File(...)):
-    """Recibe una imagen, la almacena en S3 y la asocia al producto."""
+    """Recibe una imagen, la almacena en S3 o Azure y la asocia al producto."""
 
     # 1. Validar el tipo de archivo.
     if archivo.content_type not in TIPOS:
@@ -46,7 +53,7 @@ async def subir(producto_id: int = Form(gt=0), archivo: UploadFile = File(...)):
     # 6. Calcular la huella SHA-256.
     sha = hashlib.sha256(datos).hexdigest()
 
-    # 7. Subir la imagen al almacenamiento S3.
+    # 7. Subir la imagen al almacenamiento.
     almacen.subir(
         clave,
         datos,
@@ -107,61 +114,43 @@ def eliminar(producto_id: int):
     if not clave:
         raise HTTPException(404, "El producto no tiene imagen")
 
-    # 4. Eliminar el objeto del almacenamiento S3.
+    # 4. Eliminar el objeto del almacenamiento.
     almacen.eliminar(clave)
 
     # 5. Quitar la asociación de la imagen en Productos.
     asociar(producto_id, None)
-
-    # HTTP 204: no se devuelve contenido.
     
 # ---------------------------------------------------------------- Funciones auxiliares
 
 def producto(pid: int) -> dict:
     """Consulta un producto mediante el microservicio Productos."""
-
-    r = sesion.get(
-        f"{PRODUCTOS_URL}/productos/{pid}",
-        timeout=TIEMPO_ESPERA
-    )
-
-    # Si el producto no existe, responder 404.
+    r = sesion.get(f"{PRODUCTOS_URL}/productos/{pid}", timeout=TIEMPO_ESPERA)
     if r.status_code == 404:
         raise HTTPException(404, "Producto no encontrado")
-
-    # Verificar que la respuesta sea exitosa.
     r.raise_for_status()
-
     return r.json()
-
 
 def asociar(pid: int, clave: str | None):
     """Actualiza la clave de imagen asociada a un producto."""
-
     r = sesion.put(
         f"{PRODUCTOS_URL}/productos/{pid}/imagen",
         json={"imagen_key": clave},
         timeout=TIEMPO_ESPERA
     )
-
-    # Si el producto no existe, responder 404.
     if r.status_code == 404:
         raise HTTPException(404, "Producto no encontrado")
-
-    # Verificar que la actualización haya sido exitosa.
     r.raise_for_status()
-
     return r.json()
-
 
 # ---------------------------------------------------------------- Health Check
 
 @app.get("/health")
 def health():
     """Comprueba que Imagen-Service esté disponible."""
-
+    # S3 usa 'bucket', Azure usa 'contenedor'
+    nombre_almacen = getattr(almacen, "bucket", getattr(almacen, "contenedor", "desconocido"))
     return {
         "servicio": "imagenes",
         "status": "ok",
-        "bucket": almacen.bucket
+        "bucket": nombre_almacen
     }
