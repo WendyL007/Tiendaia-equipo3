@@ -72,6 +72,7 @@ services:
     ports: ["8080:8000"]
     environment:
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      IA_URL: ${IA_URL:-http://ia:8000}
     depends_on: [clientes, productos, ventas, ia]
 
   web:
