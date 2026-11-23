@@ -12,3 +12,10 @@ nota.txt
 descarga.jpg
 foto.png
 *.swp
+
+# secretos y archivos locales
+.env
+*.env
+*.env.save
+.vscode/
+*.joblib
