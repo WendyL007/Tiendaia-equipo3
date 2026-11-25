@@ -115,3 +115,4 @@ async def proxy(svc: str, req: Request, ruta: str = ""):
     return Response(
         r.content, r.status_code, media_type=r.headers.get("content-type")
     )
+#parte B:Reemplazar el código del gateway echa 
