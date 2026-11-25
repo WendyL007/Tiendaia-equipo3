@@ -5,4 +5,4 @@ requests>=2.31 # cliente HTTP para reenviar las peticiones a los servicios
 fastapi>=0.115
 uvicorn[standard]>=0.30
 requests>=2.31
-
+pyjwt>=2.8
