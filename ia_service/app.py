@@ -10,7 +10,8 @@ from cola import router as cola_router
 import joblib
 import pandas as pd
 import requests  # cliente HTTP para pedir las ventas al microservicio Ventas
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
+from seguridad import requiere_servicio  # Lab. 6: valida x-api-key con Auth
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
@@ -25,7 +26,8 @@ VENTAS_URL = os.getenv("VENTAS_URL", "http://ventas:8000")
 MODELO = Path(os.getenv("MODELO_PATH", "/modelos/modelo.joblib"))
 COLUMNAS = ["producto_id", "mes", "precio"]  # variables de entrada (features)
 
-app = FastAPI(title="TiendaIA - Servicio de IA")
+app = FastAPI(title="TiendaIA - Servicio de IA",
+              dependencies=[Depends(requiere_servicio)])  # Lab. 6
 app.include_router(cola_router)  
 
 
@@ -55,7 +57,8 @@ def entrenar():
     """
     # Pide los datos al servicio de Ventas: no lee su base de datos.
     # timeout=30: entrenar no es urgente, pero tampoco se espera para siempre.
-    ventas = requests.get(f"{VENTAS_URL}/ventas", timeout=30).json()
+    ventas = requests.get(f"{VENTAS_URL}/ventas", timeout=30,
+                      headers={"x-api-key": os.getenv("API_KEY", "")}).json()
     if len(ventas) < 30:
         raise HTTPException(
             400, f"Se requieren al menos 30 ventas (hay {len(ventas)})"

@@ -9,7 +9,8 @@ import os
 from datetime import date
 import redis
 import requests  # cliente HTTP para llamar a otros microservicios
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio  # Lab. 6: valida x-api-key con Auth
 from pydantic import BaseModel, Field
 from eventos import publicar # publicación de eventos en RabbitMQ (Lab. 3)
 
@@ -32,11 +33,13 @@ r = redis.Redis(
 CLIENTES_URL = os.getenv("CLIENTES_URL", "http://clientes:8000")
 PRODUCTOS_URL = os.getenv("PRODUCTOS_URL", "http://productos:8000")
 
-app = FastAPI(title="TiendaIA - Ventas")
+app = FastAPI(title="TiendaIA - Ventas",
+              dependencies=[Depends(requiere_servicio)])  # Lab. 6
 
 TIEMPO_ESPERA = 5  # segundos: nunca esperar para siempre a otro servicio
 sesion = requests.Session()  # reutiliza conexiones TCP entre peticiones (más rápido)
-
+# la cabecera se agrega a TODAS las peticiones que haga esta sesión (Lab. 6)
+sesion.headers.update({"x-api-key": os.getenv("API_KEY", "")})
 
 # ---------------------------------------------------------------- Modelo de entrada
 class VentaIn(BaseModel):

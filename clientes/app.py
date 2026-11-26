@@ -5,7 +5,8 @@ No llama a otros servicios: el microservicio Ventas lo consulta por HTTP para
 validar que un cliente exista, y el API Gateway le reenvía las peticiones externas.
 """
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio  # Lab. 6: valida x-api-key con Auth
 from pydantic import BaseModel, Field
 from sqlalchemy import (
     Column,
@@ -56,7 +57,8 @@ except Exception:
     # tolerante; la primera operación real fallará de forma clara si la BD no está.
     pass
 
-app = FastAPI(title="TiendaIA - Clientes")
+app = FastAPI(title="TiendaIA - Clientes",
+              dependencies=[Depends(requiere_servicio)])  # Lab. 6
 
 
 # ---------------------------------------------------------------- Modelo de entrada

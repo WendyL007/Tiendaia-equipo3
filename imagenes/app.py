@@ -8,7 +8,8 @@ import hashlib # huella SHA-256 para verificar la integridad del archivo
 import os
 import uuid # nombres únicos: dos fotos nunca se sobrescriben entre sí
 import requests # cliente HTTP para llamar al microservicio Productos
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from seguridad import requiere_servicio  # Lab. 6: valida x-api-key con Auth
 from almacen import AlmacenS3 # adaptador S3 (subir, url, eliminar)
 
 # ---------------------------------------------------------------- Configuración
@@ -19,7 +20,10 @@ MAX_BYTES = 5 * 1024 * 1024 # 5 MB: límite para no llenar el almacenamiento
 almacen = AlmacenS3() # al arrancar se conecta a S3 y revisa el bucket
 TIEMPO_ESPERA = 5 # segundos máximos de espera a Productos
 sesion = requests.Session() # reutiliza conexiones TCP con Productos
-app = FastAPI(title="TiendaIA - Imágenes")
+# la cabecera se agrega a TODAS las peticiones que haga esta sesión (Lab. 6)
+sesion.headers.update({"x-api-key": os.getenv("API_KEY", "")})
+app = FastAPI(title="TiendaIA - Imágenes",
+              dependencies=[Depends(requiere_servicio)])  # Lab. 6
 
 # ---------------------------------------------------------------- Subir imagen
 @app.post("/imagenes", status_code=201)

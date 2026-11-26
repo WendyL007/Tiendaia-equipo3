@@ -5,7 +5,8 @@ No llama a otros servicios: Ventas lo consulta por HTTP para obtener el precio y
 validar que el producto exista; el API Gateway le reenvía las peticiones externas.
 """
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from seguridad import requiere_servicio  # Lab. 6: valida x-api-key con Auth
 from pydantic import BaseModel, Field
 from pymongo import MongoClient, ReturnDocument
 
@@ -17,7 +18,8 @@ try:
 except Exception:
     pass
 
-app = FastAPI(title="TiendaIA - Productos")
+app = FastAPI(title="TiendaIA - Productos",
+              dependencies=[Depends(requiere_servicio)])  # Lab. 6
 
 
 # ---------------------------------------------------------------- Modelos de entrada

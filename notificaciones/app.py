@@ -9,7 +9,8 @@ import time
 from contextlib import asynccontextmanager
 import pika  # cliente de RabbitMQ (protocolo AMQP)
 import redis
-from fastapi import FastAPI, Query
+from fastapi import Depends, FastAPI, Query
+from seguridad import requiere_servicio  # Lab. 6: valida x-api-key con Auth
 
 # -------------------------------- Configuración --------------------------------
 RABBIT = os.getenv("RABBITMQ_HOST", "rabbitmq")
@@ -97,8 +98,8 @@ async def lifespan(app: FastAPI):
     threading.Thread(target=consumir, daemon=True).start()
     yield  # aquí la API atiende peticiones; lo que siga se ejecuta al apagar
 
-app = FastAPI(title="TiendaIA - Notificaciones", lifespan=lifespan)
-
+app = FastAPI(title="TiendaIA - Notificaciones", lifespan=lifespan,
+              dependencies=[Depends(requiere_servicio)])  # Lab. 6
 # -------------------------------- Endpoints --------------------------------
 @app.get("/health")
 def salud():
