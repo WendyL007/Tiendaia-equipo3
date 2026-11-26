@@ -19,3 +19,5 @@ foto.png
 *.env.save
 .vscode/
 *.joblib
+.env.claves
+seaweed/s3.json
